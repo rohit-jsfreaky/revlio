@@ -69,7 +69,7 @@ export const metadata: Metadata = {
       "A feedback economy platform where developers earn credits by reviewing others to get guaranteed feedback on their own projects.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: "Revlio - Feedback Economy Platform for Developers",
@@ -81,9 +81,12 @@ export const metadata: Metadata = {
     title: "Revlio - Get Real Feedback for Your Projects",
     description:
       "A feedback economy platform where developers earn credits by reviewing others to get guaranteed feedback on their own projects.",
-    images: ["/og-image.png"],
+    images: ["/og.png"],
     creator: "@revlio_dev",
+    site: "@revlio_dev",
   },
+  applicationName: "Revlio",
+  generator: "Next.js",
   alternates: {
     canonical: "https://revlio.dev",
   },
