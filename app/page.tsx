@@ -204,15 +204,38 @@ function HeroSection() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setEmail("");
+    setErrorMessage(null);
+
+    const params = new URLSearchParams(window.location.search);
+    const source = params.get("source") || params.get("utm_source") || undefined;
+
+    try {
+      const response = await fetch("/api/early-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "Unable to join waitlist");
+      }
+
+      setIsSubmitted(true);
+      setEmail("");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to join waitlist"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -305,6 +328,11 @@ function HeroSection() {
                     </div>
                   )}
                 </Button>
+                {errorMessage && (
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {errorMessage}
+                  </p>
+                )}
               </form>
             )}
           </div>
