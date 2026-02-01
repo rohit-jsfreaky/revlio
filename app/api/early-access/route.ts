@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { earlyAccess } from "@/lib/schema";
 
 export const runtime = "edge";
@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
+    const db = getDb();
     const [inserted] = await db
       .insert(earlyAccess)
       .values({
