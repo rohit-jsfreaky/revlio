@@ -23,7 +23,7 @@ const spaceGrotesk = Space_Grotesk({
 
 // SEO Metadata
 export const metadata: Metadata = {
-  metadataBase: new URL("https://revlio.vercel.app"),
+  metadataBase: new URL("https://www.getrevlio.com"),
   title: {
     default:
       "Revlio - Get Real Feedback for Your Projects | Feedback Economy Platform",
@@ -62,14 +62,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://revlio.vercel.app",
+    url: "https://www.getrevlio.com",
     siteName: "Revlio",
     title: "Revlio - Get Real Feedback for Your Projects",
     description:
       "A feedback economy platform where developers earn credits by reviewing others to get guaranteed feedback on their own projects.",
     images: [
       {
-        url: "https://revlio.vercel.app/og.png",
+        url: "https://www.getrevlio.com/og.png",
         width: 1200,
         height: 630,
         alt: "Revlio - Feedback Economy Platform for Developers",
@@ -81,14 +81,14 @@ export const metadata: Metadata = {
     title: "Revlio - Get Real Feedback for Your Projects",
     description:
       "A feedback economy platform where developers earn credits by reviewing others to get guaranteed feedback on their own projects.",
-    images: ["https://revlio.vercel.app/og.png"],
+    images: ["https://www.getrevlio.com/og.png"],
     creator: "@revlio_dev",
     site: "@revlio_dev",
   },
   applicationName: "Revlio",
   generator: "Next.js",
   alternates: {
-    canonical: "https://revlio.vercel.app",
+    canonical: "https://www.getrevlio.com",
   },
   category: "Technology",
 };
