@@ -87,6 +87,9 @@ export const metadata: Metadata = {
   },
   applicationName: "Revlio",
   generator: "Next.js",
+  verification: {
+    google: "b6f7c2enVZ4-58O3JBgrGgON1pqkkd_RCIXRngee2M4",
+  },
   alternates: {
     canonical: "https://www.getrevlio.com",
   },
