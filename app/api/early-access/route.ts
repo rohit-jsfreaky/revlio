@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { db } from "@/lib/db";
 import { earlyAccess } from "@/lib/schema";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -38,20 +37,25 @@ export async function POST(request: Request) {
         );
       }
 
-      const resend = new Resend(apiKey);
-
-      await resend.emails.send({
-        from: "Revlio <hello@getrevlio.com>",
-        to: email,
-        subject: "You're on the Revlio early access list",
-        html: `
-          <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #0b1220;">
-            <h2 style="margin: 0 0 12px;">Thanks for joining Revlio</h2>
-            <p style="margin: 0 0 12px;">You're on the early access list. We'll email you as soon as your invite is ready.</p>
-            <p style="margin: 0 0 12px;">In the meantime, keep building and we'll keep the feedback flowing.</p>
-            <p style="margin: 0; font-weight: 600;">— The Revlio Team</p>
-          </div>
-        `,
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Revlio <hello@getrevlio.com>",
+          to: email,
+          subject: "You're on the Revlio early access list",
+          html: `
+            <div style="font-family: Inter, Arial, sans-serif; line-height: 1.6; color: #0b1220;">
+              <h2 style="margin: 0 0 12px;">Thanks for joining Revlio</h2>
+              <p style="margin: 0 0 12px;">You're on the early access list. We'll email you as soon as your invite is ready.</p>
+              <p style="margin: 0 0 12px;">In the meantime, keep building and we'll keep the feedback flowing.</p>
+              <p style="margin: 0; font-weight: 600;">— The Revlio Team</p>
+            </div>
+          `,
+        }),
       });
     }
 
