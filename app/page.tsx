@@ -205,6 +205,8 @@ function HeroSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [waitlistCount, setWaitlistCount] = useState<number | null>(null);
+  const [avatarHashes, setAvatarHashes] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,6 +239,31 @@ function HeroSection() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetch("/api/early-access/avatars")
+      .then((res) => res.json())
+      .then((data) => {
+        const count = Number(data?.count);
+        const hashes = Array.isArray(data?.hashes) ? data.hashes : [];
+        if (isMounted) {
+          if (Number.isFinite(count)) setWaitlistCount(count);
+          setAvatarHashes(hashes.slice(0, 6));
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setWaitlistCount(null);
+          setAvatarHashes([]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden">
@@ -337,6 +364,31 @@ function HeroSection() {
             )}
           </div>
         </div>
+
+        {(typeof waitlistCount === "number" || avatarHashes.length > 0) && (
+          <div className="mt-8 flex items-center justify-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+            {avatarHashes.length > 0 && (
+              <div className="flex -space-x-2">
+                {avatarHashes.map((hash) => (
+                  <img
+                    key={hash}
+                    src={`https://www.gravatar.com/avatar/${hash}?d=identicon&s=64`}
+                    alt=""
+                    className="h-7 w-7 rounded-full border-2 border-white dark:border-gray-900"
+                  />
+                ))}
+              </div>
+            )}
+            {typeof waitlistCount === "number" && (
+              <span>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">
+                  {waitlistCount.toLocaleString()}
+                </span>{" "}
+                builders on the waitlist
+              </span>
+            )}
+          </div>
+        )}
 
       </div>
 
