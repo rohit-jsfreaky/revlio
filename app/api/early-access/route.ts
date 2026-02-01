@@ -3,7 +3,7 @@ import { Resend } from "resend";
 import { db } from "@/lib/db";
 import { earlyAccess } from "@/lib/schema";
 
-export const runtime = "nodejs";
+export const runtime = 'edge';
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
