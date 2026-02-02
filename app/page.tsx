@@ -87,7 +87,7 @@ function DotPattern() {
       <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1" fill="currentColor" className="text-blue-950/5 dark:text-blue-100/5" />
+            <circle cx="2" cy="2" r="1" fill="currentColor" className="text-blue-950/15 dark:text-blue-100/15" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#dots)" />
