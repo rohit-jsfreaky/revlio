@@ -152,7 +152,7 @@ export async function GET(request: Request) {
     }
 
     const [user] = await db
-      .select({ id: users.id })
+      .select({ id: users.id, onboardingCompleted: users.onboardingCompleted })
       .from(users)
       .where(eq(users.email, normalizedEmail))
       .limit(1);
@@ -167,7 +167,9 @@ export async function GET(request: Request) {
       .setExpirationTime("30d")
       .sign(encoder.encode(jwtSecret));
 
-    const response = NextResponse.redirect(new URL("/", url));
+    // Redirect based on onboarding status
+    const redirectUrl = user.onboardingCompleted ? "/" : "/onboarding";
+    const response = NextResponse.redirect(new URL(redirectUrl, url));
     response.cookies.set({
       name: "revlio_session",
       value: token,

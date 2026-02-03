@@ -1,6 +1,7 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
+import { OnboardingGuard } from "@/components/auth/onboarding-guard";
 
 export default function Providers({
   children,
@@ -9,7 +10,7 @@ export default function Providers({
 }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      {children}
+      <OnboardingGuard>{children}</OnboardingGuard>
     </ThemeProvider>
   );
 }

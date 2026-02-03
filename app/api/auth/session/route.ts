@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { getDb } from "@/lib/db";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export const runtime = "edge";
 
@@ -21,9 +24,49 @@ export async function GET(request: Request) {
       return NextResponse.json({ authenticated: false });
     }
 
-    await jwtVerify(token, new TextEncoder().encode(secret));
+    const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
+    const userId = payload.sub as string;
 
-    return NextResponse.json({ authenticated: true });
+    if (!userId) {
+      return NextResponse.json({ authenticated: false });
+    }
+
+    // Fetch user data from database
+    const db = getDb();
+    const [user] = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        name: users.name,
+        avatarUrl: users.avatarUrl,
+        bio: users.bio,
+        website: users.website,
+        position: users.position,
+        skills: users.skills,
+        onboardingCompleted: users.onboardingCompleted,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user) {
+      return NextResponse.json({ authenticated: false });
+    }
+
+    return NextResponse.json({
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+        bio: user.bio,
+        website: user.website,
+        position: user.position,
+        skills: user.skills || [],
+        onboardingCompleted: user.onboardingCompleted,
+      },
+    });
   } catch {
     return NextResponse.json({ authenticated: false });
   }

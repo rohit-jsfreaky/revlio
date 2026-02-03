@@ -31,6 +31,7 @@ export async function POST(request: Request) {
         id: users.id,
         passwordHash: users.passwordHash,
         emailVerified: users.emailVerified,
+        onboardingCompleted: users.onboardingCompleted,
       })
       .from(users)
       .where(eq(users.email, normalizedEmail))
@@ -72,7 +73,10 @@ export async function POST(request: Request) {
       .setExpirationTime("30d")
       .sign(encoder.encode(secret));
 
-    const response = NextResponse.json({ ok: true });
+    const response = NextResponse.json({ 
+      ok: true,
+      onboardingCompleted: user.onboardingCompleted,
+    });
     response.cookies.set({
       name: "revlio_session",
       value: token,

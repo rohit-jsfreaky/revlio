@@ -39,8 +39,14 @@ export default function SignInPage() {
         throw new Error(data?.error || "Unable to sign in");
       }
 
-          toast.success("Welcome back!");
-          router.push("/");
+      toast.success("Welcome back!");
+      
+      // Redirect based on onboarding status
+      if (data.onboardingCompleted === false) {
+        router.push("/onboarding");
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong");
     } finally {

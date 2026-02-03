@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, boolean, text, jsonb } from "drizzle-orm/pg-core";
 
 export const earlyAccess = pgTable("early_access", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -18,6 +18,14 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 255 }),
   avatarUrl: varchar("avatar_url", { length: 512 }),
   emailVerified: boolean("email_verified").default(false).notNull(),
+  
+  // Onboarding fields
+  onboardingCompleted: boolean("onboarding_completed").default(false).notNull(),
+  bio: text("bio"),
+  website: varchar("website", { length: 512 }),
+  position: varchar("position", { length: 255 }),
+  skills: jsonb("skills").$type<string[]>().default([]),
+  
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
