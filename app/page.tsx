@@ -19,7 +19,13 @@ import {
   Layers,
   Send,
   Award,
+  Sun,
+  Moon,
+  LogIn,
+  LogOut,
+  LayoutDashboard,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -100,6 +106,13 @@ function DotPattern() {
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [authStatus, setAuthStatus] = useState<"loading" | "authed" | "guest">(
+    "loading"
+  );
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { theme, setTheme, systemTheme } = useTheme();
+  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const isDark = resolvedTheme === "dark";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -108,6 +121,35 @@ function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetch("/api/auth/session")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        setAuthStatus(data?.authenticated ? "authed" : "guest");
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setAuthStatus("guest");
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setAuthStatus("guest");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   const navLinks = [
     { label: "Features", href: "#features" },
@@ -153,14 +195,59 @@ function Navbar() {
             ))}
           </div>
 
-          {/* CTA */}
-          <div className="flex items-center gap-3">
-            <Button
-              asChild
-              className="hidden sm:inline-flex rounded-full bg-blue-600/90 text-white hover:bg-blue-700/90 px-5 h-9 text-sm font-medium shadow-none"
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Toggle theme"
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              className="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border border-blue-100/60 dark:border-blue-900/30 bg-white/80 dark:bg-gray-900/70 text-gray-700 dark:text-gray-300 hover:bg-blue-50/80 dark:hover:bg-blue-950/30 transition-colors"
             >
-              <a href="#early-access">Join Waitlist</a>
-            </Button>
+              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            {authStatus !== "loading" && authStatus === "authed" ? (
+              <>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="hidden sm:inline-flex rounded-full border-blue-100/60 dark:border-blue-900/30"
+                >
+                  <a href="/" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </a>
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="hidden sm:inline-flex rounded-full text-gray-600 dark:text-gray-300"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="hidden sm:inline-flex rounded-full text-gray-600 dark:text-gray-300"
+                >
+                  <a href="/sign-in" className="flex items-center gap-2">
+                    <LogIn className="h-4 w-4" />
+                    Log in
+                  </a>
+                </Button>
+                <Button
+                  asChild
+                  className="hidden sm:inline-flex rounded-full bg-blue-600/90 text-white hover:bg-blue-700/90 px-5 h-9 text-sm font-medium shadow-none"
+                >
+                  <a href="#get-started">Get started</a>
+                </Button>
+              </>
+            )}
 
             {/* Mobile Toggle */}
             <button
@@ -186,10 +273,47 @@ function Navbar() {
                   {link.label}
                 </a>
               ))}
-              <div className="pt-3 mt-3 border-t border-gray-200 dark:border-gray-800">
-                <Button asChild className="w-full rounded-full bg-blue-600/90 text-white hover:bg-blue-700/90">
-                  <a href="#early-access">Join Waitlist</a>
-                </Button>
+              <div className="pt-3 mt-3 border-t border-gray-200 dark:border-gray-800 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setTheme(isDark ? "light" : "dark")}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-blue-100/60 dark:border-blue-900/30 bg-white/80 dark:bg-gray-900/70 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  {isDark ? "Light mode" : "Dark mode"}
+                </button>
+
+                {authStatus === "authed" ? (
+                  <>
+                    <Button asChild variant="outline" className="w-full rounded-full">
+                      <a href="/" className="flex items-center justify-center gap-2">
+                        <LayoutDashboard className="h-4 w-4" />
+                        Dashboard
+                      </a>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
+                      className="w-full rounded-full"
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="ghost" className="w-full rounded-full">
+                      <a href="/sign-in" className="flex items-center justify-center gap-2">
+                        <LogIn className="h-4 w-4" />
+                        Log in
+                      </a>
+                    </Button>
+                    <Button asChild className="w-full rounded-full bg-blue-600/90 text-white hover:bg-blue-700/90">
+                      <a href="#get-started">Get started</a>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -200,7 +324,11 @@ function Navbar() {
 }
 
 // ===== HERO SECTION =====
-function HeroSection() {
+function HeroSection({
+  isAuthenticated,
+}: {
+  isAuthenticated: boolean;
+}) {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -226,14 +354,14 @@ function HeroSection() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        throw new Error(data?.error || "Unable to join waitlist");
+        throw new Error(data?.error || "Unable to get started");
       }
 
       setIsSubmitted(true);
       setEmail("");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Unable to join waitlist"
+        error instanceof Error ? error.message : "Unable to get started"
       );
     } finally {
       setIsSubmitting(false);
@@ -273,7 +401,7 @@ function HeroSection() {
       <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 text-center">
         {/* Announcement Badge with Shimmer */}
         <a 
-          href="#early-access"
+          href="#get-started"
           className="group relative inline-flex items-center gap-2 rounded-full border border-blue-200/60 dark:border-blue-800/60 bg-white dark:bg-gray-900 px-4 py-1.5 text-sm font-medium mb-8 hover:border-blue-300/70 dark:hover:border-blue-700/60 transition-colors overflow-hidden shadow-sm"
         >
           {/* Shimmer effect */}
@@ -283,84 +411,117 @@ function HeroSection() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400/70 opacity-70" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500/80" />
             </span>
-            <span className="text-gray-700 dark:text-gray-300">Early Access Now Open</span>
+            <span className="text-gray-700 dark:text-gray-300">Welcome to Revlio</span>
             <span className="text-gray-400">—</span>
-            <span className="text-blue-600/80 dark:text-blue-400/80 font-semibold">Join the Waitlist</span>
+            <span className="text-blue-600/80 dark:text-blue-400/80 font-semibold">Start giving feedback</span>
           </span>
         </a>
 
         {/* Main Headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-bold tracking-tight leading-[1.1] mb-6 text-gray-900 dark:text-white">
-          Get Real Feedback,
+          Give feedback.
           <br />
-          Not Fake Likes
+          Get feedback that matters.
         </h1>
 
         {/* Subheadline */}
         <p className="mx-auto max-w-2xl text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-12 leading-relaxed">
-          The feedback economy for builders. Earn credits by reviewing others,
-          spend them to get{" "}
+          Revlio is the feedback platform for builders. Review real projects,
+          earn credits, and redeem them for{" "}
           <span className="text-blue-600/80 dark:text-blue-400/80 font-medium">
-            guaranteed, structured feedback
+            structured feedback you can act on
           </span>{" "}
-          on your projects.
+          — without chasing likes.
         </p>
 
         {/* Email Form Card */}
-        <div id="early-access" className="mx-auto max-w-md">
+        <div id="get-started" className="mx-auto max-w-md">
           <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 shadow-xl shadow-blue-900/5 dark:shadow-black/20">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-              Get Early Access
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
-              Be the first to know when we launch.
-            </p>
-
-            {isSubmitted ? (
-              <div className="flex items-center gap-3 py-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100/70 dark:bg-blue-900/30">
-                  <CheckCircle2 className="w-5 h-5 text-blue-600/80 dark:text-blue-400/80" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-gray-900 dark:text-white">You&apos;re on the list!</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">We&apos;ll be in touch soon.</p>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-3">
-                <div className="relative">
-                  <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="h-11 pl-4 pr-4 text-base bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500/15 focus:border-blue-500/70"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-11 rounded-xl bg-blue-600/90 text-white hover:bg-blue-700/90 font-medium"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Joining...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      <span>Join Waitlist</span>
+            {isAuthenticated ? (
+              <>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                  You&apos;re signed in
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+                  Start reviewing projects and earn feedback credits.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    asChild
+                    className="w-full h-11 rounded-xl bg-blue-600/90 text-white hover:bg-blue-700/90 font-medium"
+                  >
+                    <a href="#how-it-works" className="flex items-center justify-center gap-2">
+                      See how it works
                       <ArrowRight className="w-4 h-4" />
+                    </a>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full h-11 rounded-xl"
+                  >
+                    <a href="#features" className="flex items-center justify-center gap-2">
+                      Explore features
+                    </a>
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                  Create your account
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+                  Start giving feedback and earn credits today.
+                </p>
+
+                {isSubmitted ? (
+                  <div className="flex items-center gap-3 py-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100/70 dark:bg-blue-900/30">
+                      <CheckCircle2 className="w-5 h-5 text-blue-600/80 dark:text-blue-400/80" />
                     </div>
-                  )}
-                </Button>
-                {errorMessage && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    {errorMessage}
-                  </p>
+                    <div className="text-left">
+                      <p className="font-medium text-gray-900 dark:text-white">You&apos;re on the list!</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">We&apos;ll be in touch soon.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-3">
+                    <div className="relative">
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="h-11 pl-4 pr-4 text-base bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500/15 focus:border-blue-500/70"
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full h-11 rounded-xl bg-blue-600/90 text-white hover:bg-blue-700/90 font-medium"
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Joining...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2">
+                          <span>Get started</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      )}
+                    </Button>
+                    {errorMessage && (
+                      <p className="text-sm text-red-600 dark:text-red-400">
+                        {errorMessage}
+                      </p>
+                    )}
+                  </form>
                 )}
-              </form>
+              </>
             )}
           </div>
         </div>
@@ -384,7 +545,7 @@ function HeroSection() {
                 <span className="font-semibold text-gray-700 dark:text-gray-300">
                   {waitlistCount.toLocaleString()}
                 </span>{" "}
-                builders on the waitlist
+                builders getting ready
               </span>
             )}
           </div>
@@ -657,7 +818,7 @@ function FAQSection() {
     {
       question: "How do I get started?",
       answer:
-        "Join the early access waitlist by entering your email above. Once we launch, you'll be the first to get access. After signing up, complete your profile, review 2 projects to earn initial credits, then submit your own project for review.",
+        "Create your account with the email form above. You'll receive a verification code, then you can start reviewing projects to earn credits and submit your own project for structured feedback.",
     },
     {
       question: "What makes the feedback structured?",
@@ -667,7 +828,7 @@ function FAQSection() {
     {
       question: "When will Revlio launch?",
       answer:
-        "We're currently in early access preparation. Early access members will be invited in waves starting soon. Join the waitlist to be among the first to try Revlio!",
+        "Revlio is in active development. Early members are onboarding now, and new features roll out continuously. Create your account and start contributing today.",
     },
   ];
 
@@ -787,10 +948,10 @@ function CTASection() {
         </div>
         
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white">
-          Ready to Get Real Feedback?
+          Ready to start giving feedback?
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-10 max-w-xl mx-auto">
-          Join the waitlist and be the first to experience the feedback economy. 
+          Join Revlio and build your feedback credit balance.
           <span className="font-medium text-blue-600/75 dark:text-blue-400/75 ml-1">Always free, forever.</span>
         </p>
 
@@ -800,8 +961,8 @@ function CTASection() {
           size="lg"
           className="rounded-full bg-blue-600/90 text-white hover:bg-blue-700/90 px-8 h-12 text-base font-medium shadow-lg shadow-blue-500/20"
         >
-          <a href="#early-access">
-            Join the Waitlist
+          <a href="#get-started">
+            Get started
             <ArrowRight className="w-4 h-4 ml-2" />
           </a>
         </Button>
@@ -855,12 +1016,31 @@ function Footer() {
 export default function Home() {
   // Initialize Lenis smooth scroll
   useLenis();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/auth/session")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        setIsAuthenticated(Boolean(data?.authenticated));
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setIsAuthenticated(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <>
       <Navbar />
       <main className="overflow-hidden">
-        <HeroSection />
+        <HeroSection isAuthenticated={isAuthenticated} />
         <ProblemSection />
         <HowItWorksSection />
         <BenefitsSection />

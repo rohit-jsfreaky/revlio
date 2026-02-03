@@ -8,6 +8,20 @@
       "when": 1769968566886,
       "tag": "0000_zippy_photon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770048163281,
+      "tag": "0001_next_wonder_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770048969657,
+      "tag": "0002_mature_gorilla_man",
+      "breakpoints": true
     }
   ]
 }
