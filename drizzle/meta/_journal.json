@@ -29,6 +29,34 @@
       "when": 1770115195897,
       "tag": "0003_bent_siren",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770122297841,
+      "tag": "0004_superb_hydra",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1770125084787,
+      "tag": "0005_goofy_mordo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1770128566757,
+      "tag": "0006_narrow_boom_boom",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1770129449772,
+      "tag": "0007_fixed_grandmaster",
+      "breakpoints": true
     }
   ]
 }

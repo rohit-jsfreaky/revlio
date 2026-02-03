@@ -3,6 +3,7 @@ import { and, eq, gt, isNull, desc } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { emailOtps, users } from "@/lib/schema";
 import { hashOtp } from "@/lib/auth";
+import { grantInitialCredits } from "@/lib/credits";
 
 export const runtime = "edge";
 
@@ -30,14 +31,17 @@ export async function POST(request: Request) {
           eq(emailOtps.codeHash, codeHash),
           eq(emailOtps.purpose, "verify"),
           isNull(emailOtps.usedAt),
-          gt(emailOtps.expiresAt, new Date())
-        )
+          gt(emailOtps.expiresAt, new Date()),
+        ),
       )
       .orderBy(desc(emailOtps.createdAt))
       .limit(1);
 
     if (!otpRow?.id) {
-      return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid or expired code" },
+        { status: 400 },
+      );
     }
 
     await db
@@ -45,10 +49,24 @@ export async function POST(request: Request) {
       .set({ usedAt: new Date() })
       .where(eq(emailOtps.id, otpRow.id));
 
+    // Get user before update to check if already verified
+    const [userRecord] = await db
+      .select({ id: users.id, emailVerified: users.emailVerified })
+      .from(users)
+      .where(eq(users.email, normalizedEmail))
+      .limit(1);
+
+    const wasAlreadyVerified = userRecord?.emailVerified;
+
     await db
       .update(users)
       .set({ emailVerified: true })
       .where(eq(users.email, normalizedEmail));
+
+    // Grant initial credits only on first verification
+    if (userRecord?.id && !wasAlreadyVerified) {
+      await grantInitialCredits(userRecord.id);
+    }
 
     const resendKey = process.env.RESEND_API_KEY;
     if (resendKey) {
@@ -77,7 +95,7 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

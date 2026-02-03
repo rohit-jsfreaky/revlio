@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "version" varchar(50) DEFAULT '1.0.0';

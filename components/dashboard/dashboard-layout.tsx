@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,6 +23,19 @@ import {
   MoreHorizontal,
   Hash,
 } from "lucide-react";
+
+// Credits Context for sharing credit balance across components
+interface CreditsContextType {
+  credits: number;
+  refreshCredits: () => Promise<void>;
+}
+
+const CreditsContext = createContext<CreditsContextType>({
+  credits: 0,
+  refreshCredits: async () => {},
+});
+
+export const useCredits = () => useContext(CreditsContext);
 
 import {
   Sidebar,
@@ -235,6 +248,7 @@ function LeftSidebar({ user }: { user: UserData | null }) {
 function RightSidebar() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { credits } = useCredits();
 
   useEffect(() => {
     setMounted(true);
@@ -254,8 +268,10 @@ function RightSidebar() {
           <h3 className="font-semibold text-amber-900 dark:text-amber-100">Your Credits</h3>
           <Coins className="h-5 w-5 text-amber-600 dark:text-amber-400" />
         </div>
-        <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">0</p>
-        <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">Review projects to earn credits</p>
+        <p className="text-3xl font-bold text-amber-900 dark:text-amber-100">{credits}</p>
+        <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+          {credits === 0 ? "Review projects to earn credits" : "Use credits to submit projects"}
+        </p>
         <Button asChild variant="outline" size="sm" className="mt-3 w-full border-amber-300 dark:border-amber-700">
           <Link href="/dashboard/reviews">Start Reviewing</Link>
         </Button>
@@ -322,6 +338,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [credits, setCredits] = useState(0);
+
+  const refreshCredits = async () => {
+    try {
+      const res = await fetch("/api/credits?type=balance");
+      const data = await res.json();
+      if (data.balance !== undefined) {
+        setCredits(data.balance);
+      }
+    } catch (error) {
+      console.error("Error fetching credits:", error);
+    }
+  };
 
   useEffect(() => {
     async function checkAuth() {
@@ -340,6 +369,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         }
 
         setUser(data.user);
+        // Fetch credits after auth check
+        refreshCredits();
       } catch (error) {
         console.error("Auth check error:", error);
         router.push("/sign-in");
@@ -363,30 +394,32 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-linear-to-br from-background via-background to-muted/30">
-        {/* Left Sidebar */}
-        <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-          <LeftSidebar user={user} />
-        </Sidebar>
+    <CreditsContext.Provider value={{ credits, refreshCredits }}>
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full bg-linear-to-br from-background via-background to-muted/30">
+          {/* Left Sidebar */}
+          <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+            <LeftSidebar user={user} />
+          </Sidebar>
 
-        {/* Main Content - Feed Style */}
-        <SidebarInset className="flex-1 overflow-x-hidden">
-          <div className="flex w-full max-w-6xl mx-auto gap-6 px-0 sm:px-4 lg:px-6 py-0 sm:py-6">
-            {/* Center Feed Column */}
-            <main className="flex-1 min-h-screen w-full bg-background/80 shadow-sm lg:rounded-3xl lg:border lg:border-border/70 overflow-x-hidden">
-              <div className="lg:p-3">
-                <div className="bg-background lg:rounded-3xl lg:border lg:border-border/60 overflow-hidden w-full">
-                  {children}
+          {/* Main Content - Feed Style */}
+          <SidebarInset className="flex-1 overflow-x-hidden">
+            <div className="flex w-full max-w-6xl mx-auto gap-6 px-0 sm:px-4 lg:px-6 py-0 sm:py-6">
+              {/* Center Feed Column */}
+              <main className="flex-1 min-h-screen w-full bg-background/80 shadow-sm lg:rounded-3xl lg:border lg:border-border/70 overflow-x-hidden">
+                <div className="lg:p-3">
+                  <div className="bg-background lg:rounded-3xl lg:border lg:border-border/60 overflow-hidden w-full">
+                    {children}
+                  </div>
                 </div>
-              </div>
-            </main>
+              </main>
 
-            {/* Right Sidebar */}
-            <RightSidebar />
-          </div>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+              {/* Right Sidebar */}
+              <RightSidebar />
+            </div>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+    </CreditsContext.Provider>
   );
 }

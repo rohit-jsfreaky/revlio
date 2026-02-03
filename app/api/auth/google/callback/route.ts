@@ -4,6 +4,7 @@ import { SignJWT } from "jose";
 import { getDb } from "@/lib/db";
 import { oauthStates, users } from "@/lib/schema";
 import { hashState } from "@/lib/oauth";
+import { grantInitialCredits } from "@/lib/credits";
 
 export const runtime = "edge";
 
@@ -38,8 +39,8 @@ export async function GET(request: Request) {
         and(
           eq(oauthStates.stateHash, stateHash),
           eq(oauthStates.provider, "google"),
-          gt(oauthStates.expiresAt, new Date())
-        )
+          gt(oauthStates.expiresAt, new Date()),
+        ),
       )
       .limit(1);
 
@@ -77,7 +78,7 @@ export async function GET(request: Request) {
         headers: {
           Authorization: `Bearer ${tokenData.access_token}`,
         },
-      }
+      },
     );
 
     const profile = (await profileRes.json()) as {
@@ -148,6 +149,17 @@ export async function GET(request: Request) {
             `,
           }),
         });
+      }
+
+      // Grant initial credits to new Google users
+      const [newUser] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.email, normalizedEmail))
+        .limit(1);
+
+      if (newUser?.id) {
+        await grantInitialCredits(newUser.id);
       }
     }
 
