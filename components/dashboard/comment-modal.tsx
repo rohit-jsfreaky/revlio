@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +42,7 @@ interface Comment {
   isPinned: boolean;
   likeCount: number;
   isLiked: boolean;
+  isPending?: boolean;
   createdAt: string;
   updatedAt: string;
   user: CommentUser;
@@ -134,12 +136,18 @@ function CommentItem({
               <span className="text-xs text-muted-foreground">
                 {formatTimeAgo(comment.createdAt)}
               </span>
+              {comment.isPending && (
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Sending...
+                </span>
+              )}
             </div>
             <p className="text-sm mt-1 whitespace-pre-wrap wrap-break-word">
               {comment.content}
             </p>
             <div className="flex items-center gap-3 mt-2">
-              {currentUserId && (
+              {currentUserId && !comment.isPending && (
                 <button
                   onClick={() => onLike(comment.id)}
                   className={`text-xs flex items-center gap-1 transition-colors ${
@@ -156,7 +164,7 @@ function CommentItem({
                   )}
                 </button>
               )}
-              {depth < maxDepth && currentUserId && (
+              {depth < maxDepth && currentUserId && !comment.isPending && (
                 <button
                   onClick={() =>
                     onReply(comment.id, comment.user.name || "Anonymous")
@@ -243,6 +251,7 @@ export function CommentModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const onCommentCountChangeRef = useRef(onCommentCountChange);
   const likeRequestRef = useRef<Record<string, number>>({});
+  const likeControllersRef = useRef<Map<string, AbortController>>(new Map());
 
   useEffect(() => {
     onCommentCountChangeRef.current = onCommentCountChange;
@@ -302,7 +311,42 @@ export function CommentModal({
   const handleSendComment = async () => {
     if (!newComment.trim() || !currentUserId) return;
 
+    const tempId = `temp-${Date.now()}`;
+    const now = new Date().toISOString();
+    const tempComment: Comment = {
+      id: tempId,
+      projectId,
+      userId: currentUserId,
+      content: newComment.trim(),
+      parentId: replyTo?.id || null,
+      isPinned: false,
+      likeCount: 0,
+      isLiked: false,
+      isPending: true,
+      createdAt: now,
+      updatedAt: now,
+      user: {
+        id: currentUserId,
+        name: "You",
+        avatarUrl: null,
+      },
+      replies: [],
+    };
+
     setIsSending(true);
+    setNewComment("");
+    setReplyTo(null);
+
+    if (replyTo) {
+      const optimistic = addReplyToComments(comments, replyTo.id, tempComment);
+      setComments(optimistic);
+      onCommentCountChangeRef.current?.(countAllComments(optimistic));
+    } else {
+      const optimistic = [tempComment, ...comments];
+      setComments(optimistic);
+      onCommentCountChangeRef.current?.(countAllComments(optimistic));
+    }
+
     try {
       const res = await fetch("/api/comments", {
         method: "POST",
@@ -310,8 +354,8 @@ export function CommentModal({
         body: JSON.stringify({
           action: "add",
           projectId,
-          content: newComment.trim(),
-          parentId: replyTo?.id,
+          content: tempComment.content,
+          parentId: tempComment.parentId || undefined,
         }),
       });
 
@@ -322,25 +366,19 @@ export function CommentModal({
 
       const data = await res.json();
 
-      // Add to local state
-      if (replyTo) {
-        const nextComments = addReplyToComments(
-          comments,
-          replyTo.id,
-          data.comment
-        );
-        setComments(nextComments);
-        onCommentCountChangeRef.current?.(countAllComments(nextComments));
-      } else {
-        const nextComments = [data.comment, ...comments];
-        setComments(nextComments);
-        onCommentCountChangeRef.current?.(countAllComments(nextComments));
-      }
-
-      setNewComment("");
-      setReplyTo(null);
+      setComments((prev) =>
+        replaceCommentById(prev, tempId, {
+          ...data.comment,
+          isPending: false,
+        })
+      );
       toast.success("Comment posted!");
     } catch (error) {
+      setComments((prev) => {
+        const next = removeComment(prev, tempId);
+        onCommentCountChangeRef.current?.(countAllComments(next));
+        return next;
+      });
       toast.error(
         error instanceof Error ? error.message : "Failed to post comment"
       );
@@ -408,6 +446,14 @@ export function CommentModal({
 
     setComments((prev) => toggleLikeInComments(prev, commentId));
 
+    const existing = likeControllersRef.current.get(commentId);
+    if (existing) {
+      existing.abort();
+    }
+
+    const controller = new AbortController();
+    likeControllersRef.current.set(commentId, controller);
+
     const requestId = (likeRequestRef.current[commentId] || 0) + 1;
     likeRequestRef.current[commentId] = requestId;
 
@@ -419,6 +465,7 @@ export function CommentModal({
           action: "like",
           commentId,
         }),
+        signal: controller.signal,
       });
 
       if (!res.ok) throw new Error("Failed to like");
@@ -434,7 +481,10 @@ export function CommentModal({
           likeCount: data.likeCount,
         }))
       );
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
       if (likeRequestRef.current[commentId] === requestId) {
         setComments((prev) => toggleLikeInComments(prev, commentId));
       }
@@ -449,6 +499,22 @@ export function CommentModal({
   if (!isOpen) return null;
 
   // Helper functions
+  function replaceCommentById(
+    comments: Comment[],
+    id: string,
+    replacement: Comment
+  ): Comment[] {
+    return comments.map((c) => {
+      if (c.id === id) return replacement;
+      if (c.replies && c.replies.length > 0) {
+        return {
+          ...c,
+          replies: replaceCommentById(c.replies, id, replacement),
+        };
+      }
+      return c;
+    });
+  }
   function addReplyToComments(
     comments: Comment[],
     parentId: string,
@@ -525,7 +591,7 @@ export function CommentModal({
         ref={modalRef}
         className={`fixed z-50 bg-background flex flex-col ${
           isMobile
-            ? "inset-x-0 bottom-0 rounded-t-3xl max-h-[90vh] animate-in slide-in-from-bottom duration-300"
+            ? "inset-x-0 bottom-0 rounded-t-2xl h-[90vh] animate-in slide-in-from-bottom duration-300 shadow-lg border border-border"
             : "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg h-[80vh] max-h-175 rounded-2xl animate-in zoom-in-95 fade-in duration-200"
         }`}
       >
@@ -558,10 +624,19 @@ export function CommentModal({
         </div>
 
         {/* Comments list */}
-        <div className="flex-1 overflow-y-auto px-4">
+        <div className="flex-1 overflow-y-auto px-4 pb-2">
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <div className="py-6 space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-3">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : comments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">

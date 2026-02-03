@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -33,6 +33,16 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ProjectSubmitModal } from "@/components/dashboard/project-submit-modal";
 import { CommentModal } from "@/components/dashboard/comment-modal";
 import { useCredits } from "@/components/dashboard/dashboard-layout";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 interface UserData {
@@ -258,8 +268,11 @@ function ProjectFeedCard({
   const [isLiked, setIsLiked] = useState(project.isLiked);
   const [likeCount, setLikeCount] = useState(project.likeCount);
   const [copied, setCopied] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(followingIds.has(project.owner.id));
+  const [isFollowing, setIsFollowing] = useState(
+    followingIds.has(project.owner.id)
+  );
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  const [unfollowOpen, setUnfollowOpen] = useState(false);
 
   const isOwnProject = currentUserId === project.owner.id;
 
@@ -328,6 +341,10 @@ function ProjectFeedCard({
     }
   };
 
+  useEffect(() => {
+    setIsFollowing(followingIds.has(project.owner.id));
+  }, [followingIds, project.owner.id]);
+
   return (
     <article className="p-2 sm:p-4">
       <div className="rounded-2xl sm:rounded-3xl border border-border bg-card/70 p-3 sm:p-4 hover:shadow-sm transition-shadow">
@@ -362,7 +379,13 @@ function ProjectFeedCard({
                 <Button
                   variant={isFollowing ? "outline" : "default"}
                   size="sm"
-                  onClick={handleFollow}
+                  onClick={() => {
+                    if (isFollowing) {
+                      setUnfollowOpen(true);
+                    } else {
+                      handleFollow();
+                    }
+                  }}
                   disabled={isFollowLoading}
                   className={`rounded-full h-7 px-3 text-xs shrink-0 ${
                     isFollowing
@@ -386,6 +409,26 @@ function ProjectFeedCard({
                 </Button>
               )}
             </div>
+
+            <AlertDialog open={unfollowOpen} onOpenChange={setUnfollowOpen}>
+              <AlertDialogContent size="sm">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Unfollow user?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You will stop seeing their projects in your Circle feed.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    onClick={handleFollow}
+                  >
+                    Unfollow
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
             {/* Badges */}
             <div className="flex items-center gap-1.5 mt-1 flex-wrap">
@@ -666,6 +709,7 @@ export default function DashboardPage() {
   // Comment modal state
   const [commentModalOpen, setCommentModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const likeControllersRef = useRef<Map<string, AbortController>>(new Map());
 
   const { credits, refreshCredits } = useCredits();
 
@@ -736,15 +780,28 @@ export default function DashboardPage() {
 
   const handleLike = async (projectId: string) => {
     try {
+      const existing = likeControllersRef.current.get(projectId);
+      if (existing) {
+        existing.abort();
+      }
+
+      const controller = new AbortController();
+      likeControllersRef.current.set(projectId, controller);
+
       const res = await fetch("/api/likes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projectId }),
+        signal: controller.signal,
       });
 
       if (!res.ok) throw new Error("Failed to like");
 
       const data = await res.json();
+
+      if (likeControllersRef.current.get(projectId) !== controller) {
+        return;
+      }
 
       // Update local state
       setProjects((prev) =>
@@ -755,6 +812,9 @@ export default function DashboardPage() {
         )
       );
     } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
       console.error("Failed to like:", error);
       toast.error("Failed to like project");
       throw error;
