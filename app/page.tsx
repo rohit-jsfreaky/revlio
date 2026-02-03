@@ -213,7 +213,7 @@ function Navbar() {
                   variant="outline"
                   className="hidden sm:inline-flex rounded-full border-blue-100/60 dark:border-blue-900/30"
                 >
-                  <a href="/" className="flex items-center gap-2">
+                  <a href="/dashboard" className="flex items-center gap-2">
                     <LayoutDashboard className="h-4 w-4" />
                     Dashboard
                   </a>
@@ -286,7 +286,7 @@ function Navbar() {
                 {authStatus === "authed" ? (
                   <>
                     <Button asChild variant="outline" className="w-full rounded-full">
-                      <a href="/" className="flex items-center justify-center gap-2">
+                      <a href="/dashboard" className="flex items-center justify-center gap-2">
                         <LayoutDashboard className="h-4 w-4" />
                         Dashboard
                       </a>
@@ -450,8 +450,8 @@ function HeroSection({
                     asChild
                     className="w-full h-11 rounded-xl bg-blue-600/90 text-white hover:bg-blue-700/90 font-medium"
                   >
-                    <a href="#how-it-works" className="flex items-center justify-center gap-2">
-                      See how it works
+                    <a href="/dashboard" className="flex items-center justify-center gap-2">
+                      Go to Dashboard
                       <ArrowRight className="w-4 h-4" />
                     </a>
                   </Button>
@@ -460,8 +460,8 @@ function HeroSection({
                     variant="outline"
                     className="w-full h-11 rounded-xl"
                   >
-                    <a href="#features" className="flex items-center justify-center gap-2">
-                      Explore features
+                    <a href="/dashboard/reviews" className="flex items-center justify-center gap-2">
+                      Start Reviewing
                     </a>
                   </Button>
                 </div>

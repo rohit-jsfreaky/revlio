@@ -7,17 +7,17 @@
   /* Background & Foreground */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-space-grotesk);
-  
+
   /* Brand Colors */
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-muted: var(--brand-muted);
-  
+
   /* Status Colors */
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
@@ -25,11 +25,11 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
-  
+
   /* Credit System Colors */
   --color-credit: var(--credit);
   --color-credit-foreground: var(--credit-foreground);
-  
+
   /* Sidebar */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -39,14 +39,14 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  
+
   /* Charts */
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
-  
+
   /* UI Elements */
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -64,7 +64,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  
+
   /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -78,46 +78,46 @@
 /* ===== LIGHT MODE ===== */
 :root {
   --radius: 0.625rem;
-  
+
   /* Background & Foreground */
   --background: oklch(0.995 0.001 270);
   --foreground: oklch(0.13 0.02 270);
-  
+
   /* Card & Popover */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.13 0.02 270);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.13 0.02 270);
-  
+
   /* Primary - Muted Blue */
   --primary: oklch(0.55 0.13 250);
   --primary-foreground: oklch(0.99 0 0);
-  
+
   /* Secondary */
   --secondary: oklch(0.97 0.008 250);
   --secondary-foreground: oklch(0.25 0.02 270);
-  
+
   /* Muted */
   --muted: oklch(0.965 0.005 250);
   --muted-foreground: oklch(0.48 0.01 270);
-  
+
   /* Accent - Soft blue */
   --accent: oklch(0.96 0.02 250);
   --accent-foreground: oklch(0.25 0.02 270);
-  
+
   /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
-  
+
   /* Borders & Input */
   --border: oklch(0.91 0.005 270);
   --input: oklch(0.91 0.005 270);
   --ring: oklch(0.55 0.13 250);
-  
+
   /* Brand - Muted Blue */
   --brand: oklch(0.55 0.13 250);
   --brand-foreground: oklch(0.99 0 0);
   --brand-muted: oklch(0.95 0.03 250);
-  
+
   /* Status Colors */
   --success: oklch(0.65 0.18 145);
   --success-foreground: oklch(0.99 0 0);
@@ -125,18 +125,18 @@
   --warning-foreground: oklch(0.2 0.02 75);
   --info: oklch(0.6 0.15 240);
   --info-foreground: oklch(0.99 0 0);
-  
+
   /* Credit System - Gold */
   --credit: oklch(0.78 0.15 85);
   --credit-foreground: oklch(0.25 0.02 85);
-  
+
   /* Charts */
   --chart-1: oklch(0.55 0.13 250);
   --chart-2: oklch(0.6 0.12 235);
   --chart-3: oklch(0.65 0.18 145);
   --chart-4: oklch(0.78 0.15 85);
   --chart-5: oklch(0.6 0.12 275);
-  
+
   /* Sidebar */
   --sidebar: oklch(0.99 0.002 270);
   --sidebar-foreground: oklch(0.13 0.02 270);
@@ -153,42 +153,42 @@
   /* Background & Foreground */
   --background: oklch(0.11 0.015 270);
   --foreground: oklch(0.96 0.005 270);
-  
+
   /* Card & Popover */
   --card: oklch(0.15 0.015 270);
   --card-foreground: oklch(0.96 0.005 270);
   --popover: oklch(0.15 0.015 270);
   --popover-foreground: oklch(0.96 0.005 270);
-  
+
   /* Primary - Muted Blue for dark mode */
   --primary: oklch(0.7 0.12 250);
   --primary-foreground: oklch(0.11 0.015 270);
-  
+
   /* Secondary */
   --secondary: oklch(0.2 0.015 250);
   --secondary-foreground: oklch(0.96 0.005 270);
-  
+
   /* Muted */
   --muted: oklch(0.22 0.01 250);
   --muted-foreground: oklch(0.65 0.01 270);
-  
+
   /* Accent */
   --accent: oklch(0.24 0.03 250);
   --accent-foreground: oklch(0.96 0.005 270);
-  
+
   /* Destructive */
   --destructive: oklch(0.704 0.191 22.216);
-  
+
   /* Borders & Input */
   --border: oklch(0.25 0.01 270);
   --input: oklch(0.22 0.01 270);
   --ring: oklch(0.7 0.12 250);
-  
+
   /* Brand - Muted Blue for dark mode */
   --brand: oklch(0.68 0.12 250);
   --brand-foreground: oklch(0.11 0.015 270);
   --brand-muted: oklch(0.24 0.05 250);
-  
+
   /* Status Colors */
   --success: oklch(0.7 0.18 145);
   --success-foreground: oklch(0.12 0.02 145);
@@ -196,18 +196,18 @@
   --warning-foreground: oklch(0.15 0.02 75);
   --info: oklch(0.65 0.15 240);
   --info-foreground: oklch(0.12 0.02 240);
-  
+
   /* Credit System - Brighter Gold */
   --credit: oklch(0.82 0.16 85);
   --credit-foreground: oklch(0.2 0.02 85);
-  
+
   /* Charts */
   --chart-1: oklch(0.68 0.12 250);
   --chart-2: oklch(0.7 0.12 235);
   --chart-3: oklch(0.7 0.18 145);
   --chart-4: oklch(0.82 0.16 85);
   --chart-5: oklch(0.7 0.12 275);
-  
+
   /* Sidebar */
   --sidebar: oklch(0.15 0.015 270);
   --sidebar-foreground: oklch(0.96 0.005 270);
@@ -224,16 +224,16 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased;
   }
-  
+
   /* Smooth theme transitions */
   html {
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-  
+
   /* Typography */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
@@ -250,7 +250,7 @@
       oklch(0.55 0.13 250) 100%
     );
   }
-  
+
   .bg-gradient-brand-subtle {
     background: linear-gradient(135deg,
       oklch(0.97 0.02 250) 0%,
@@ -258,7 +258,7 @@
       oklch(0.97 0.02 250) 100%
     );
   }
-  
+
   .dark .bg-gradient-brand-subtle {
     background: linear-gradient(135deg,
       oklch(0.16 0.03 250) 0%,
@@ -266,7 +266,7 @@
       oklch(0.16 0.03 250) 100%
     );
   }
-  
+
   /* Decorative gradients for hero */
   .bg-gradient-mesh {
     background: 
@@ -274,14 +274,14 @@
       radial-gradient(at 80% 70%, oklch(0.88 0.10 235 / 0.18) 0%, transparent 50%),
       radial-gradient(at 50% 50%, oklch(0.98 0.02 250) 0%, transparent 70%);
   }
-  
+
   .dark .bg-gradient-mesh {
     background:
       radial-gradient(at 20% 30%, oklch(0.35 0.12 250 / 0.22) 0%, transparent 50%),
       radial-gradient(at 80% 70%, oklch(0.30 0.12 235 / 0.18) 0%, transparent 50%),
       radial-gradient(at 50% 50%, oklch(0.11 0.015 250) 0%, transparent 70%);
   }
-  
+
   /* Text gradient - muted blue */
   .text-gradient-brand {
     background: linear-gradient(135deg, 
@@ -293,18 +293,18 @@
     background-clip: text;
     color: oklch(0.55 0.13 250);
   }
-  
+
   /* Glass effect */
   .glass {
     background: oklch(1 0 0 / 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
-  
+
   .dark .glass {
     background: oklch(0.15 0.015 270 / 0.7);
   }
-  
+
   /* Floating navbar glass - more pronounced */
   .navbar-glass {
     background: oklch(1 0 0 / 0.85);
@@ -315,7 +315,7 @@
       0 1px 3px oklch(0 0 0 / 0.05),
       inset 0 1px 0 oklch(1 0 0 / 0.5);
   }
-  
+
   .dark .navbar-glass {
     background: oklch(0.13 0.015 270 / 0.85);
     box-shadow: 
@@ -323,13 +323,13 @@
       0 1px 3px oklch(0 0 0 / 0.2),
       inset 0 1px 0 oklch(1 0 0 / 0.05);
   }
-  
+
   /* Animated gradient border */
   .border-gradient {
     position: relative;
     border: none;
   }
-  
+
   .border-gradient::before {
     content: "";
     position: absolute;
@@ -346,13 +346,13 @@
     mask-composite: exclude;
     pointer-events: none;
   }
-  
+
   /* Shimmer animation for badge */
   .shimmer {
     position: relative;
     overflow: hidden;
   }
-  
+
   .shimmer::after {
     content: "";
     position: absolute;
@@ -368,7 +368,7 @@
     );
     animation: shimmer-slide 2s ease-in-out infinite;
   }
-  
+
   /* Icon container styles */
   .icon-container {
     display: flex;
@@ -385,7 +385,7 @@
       0 8px 24px oklch(0.55 0.2 270 / 0.3),
       0 4px 8px oklch(0 0 0 / 0.1);
   }
-  
+
   .icon-container-outline {
     display: flex;
     align-items: center;
@@ -397,7 +397,7 @@
     background: oklch(0.55 0.2 270 / 0.08);
     color: oklch(0.55 0.2 270);
   }
-  
+
   .dark .icon-container-outline {
     border-color: oklch(0.68 0.18 270 / 0.3);
     background: oklch(0.68 0.18 270 / 0.1);
@@ -645,4 +645,12 @@ html {
   animation: aurora-4 12s ease-in-out infinite;
 }
 
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
