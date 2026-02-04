@@ -59,6 +59,17 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/revlio_logo.png", type: "image/png", sizes: "32x32" },
+      { url: "/revlio_logo.png", type: "image/png", sizes: "16x16" },
+    ],
+    apple: [
+      { url: "/revlio_logo.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -119,9 +130,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Primary favicon for Google Search - must be accessible at root */}
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="any" />
+        {/* PNG favicons for modern browsers */}
         <link rel="icon" href="/revlio_logo.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/revlio_logo.png" type="image/png" sizes="16x16" />
-        <link rel="apple-touch-icon" href="/revlio_logo.png" />
+        {/* Apple touch icon */}
+        <link rel="apple-touch-icon" href="/revlio_logo.png" sizes="180x180" />
+        {/* Web manifest */}
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body
