@@ -128,6 +128,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
         <Providers>
           {children}

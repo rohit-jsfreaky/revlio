@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Sparkles,
   ExternalLink,
@@ -99,80 +100,78 @@ function PostComposer({
   onOpenModal: () => void;
 }) {
   return (
-    <div className="p-2 sm:p-4 border-b border-border">
-      <div className="rounded-xl sm:rounded-3xl border border-border bg-card/60 p-2 sm:p-4 shadow-sm">
-        <div className="flex items-start sm:items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center shrink-0">
-              <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold">Build Update</p>
-              <p className="text-xs text-muted-foreground hidden sm:block">
-                Share your project and get real feedback.
-              </p>
-            </div>
+    <div className="p-3 sm:p-4 border-b border-border bg-card/30">
+      <div className="flex items-start sm:items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center shrink-0">
+            <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </div>
-          <Badge
-            variant="secondary"
-            className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-[10px] sm:text-xs shrink-0"
-          >
-            Live
-          </Badge>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold">Build Update</p>
+            <p className="text-xs text-muted-foreground hidden sm:block">
+              Share your project and get real feedback.
+            </p>
+          </div>
         </div>
-        <div className="flex gap-2 sm:gap-3">
-          <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
-            <AvatarImage
-              src={user?.avatarUrl || undefined}
-              alt={user?.name || ""}
-            />
-            <AvatarFallback className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-              {user?.name?.charAt(0)?.toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <button
-              onClick={onOpenModal}
-              className="w-full text-left min-h-16 sm:min-h-20 border border-border/60 rounded-xl sm:rounded-2xl bg-background/80 px-3 sm:px-4 py-2 sm:py-3 text-sm text-muted-foreground hover:border-primary/50 transition-colors"
-            >
-              What did you ship today? Click to submit your project...
-            </button>
-            <div className="flex items-center justify-between mt-2 sm:mt-3 gap-2">
-              <div className="flex items-center gap-0.5 sm:gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 sm:h-9 sm:w-9 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                  onClick={onOpenModal}
-                >
-                  <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 sm:h-9 sm:w-9 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                  onClick={onOpenModal}
-                >
-                  <LinkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 sm:h-9 sm:w-9 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                  onClick={onOpenModal}
-                >
-                  <Tag className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-              </div>
+        <Badge
+          variant="secondary"
+          className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 text-[10px] sm:text-xs shrink-0"
+        >
+          Live
+        </Badge>
+      </div>
+      <div className="flex gap-2 sm:gap-3">
+        <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+          <AvatarImage
+            src={user?.avatarUrl || undefined}
+            alt={user?.name || ""}
+          />
+          <AvatarFallback className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+            {user?.name?.charAt(0)?.toUpperCase() || "U"}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+          <button
+            onClick={onOpenModal}
+            className="w-full text-left min-h-16 sm:min-h-20 border border-border/60 rounded-lg bg-background px-3 sm:px-4 py-2 sm:py-3 text-sm text-muted-foreground hover:border-border transition-colors"
+          >
+            What did you ship today? Click to submit your project...
+          </button>
+          <div className="flex items-center justify-between mt-2 sm:mt-3 gap-2">
+            <div className="flex items-center gap-0.5 sm:gap-1">
               <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 sm:h-9 sm:w-9 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                 onClick={onOpenModal}
-                size="sm"
-                className="rounded-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-3 sm:px-5 text-xs sm:text-sm gap-2"
               >
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Publish</span>
+                <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 sm:h-9 sm:w-9 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                onClick={onOpenModal}
+              >
+                <LinkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 sm:h-9 sm:w-9 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                onClick={onOpenModal}
+              >
+                <Tag className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
+            <Button
+              onClick={onOpenModal}
+              size="sm"
+              className="rounded-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-3 sm:px-5 text-xs sm:text-sm gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Publish</span>
+            </Button>
           </div>
         </div>
       </div>
@@ -346,8 +345,8 @@ function ProjectFeedCard({
   }, [followingIds, project.owner.id]);
 
   return (
-    <article className="p-2 sm:p-4">
-      <div className="rounded-2xl sm:rounded-3xl border border-border bg-card/70 p-3 sm:p-4 hover:shadow-sm transition-shadow">
+    <article className="px-3 py-2 sm:p-4">
+      <div className="rounded-xl border border-border/50 bg-card/70 p-3 sm:p-4 hover:border-border hover:shadow-sm transition-all">
         <div className="flex gap-2 sm:gap-3">
           <div className="shrink-0">
             <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
@@ -462,7 +461,7 @@ function ProjectFeedCard({
             {project.screenshotUrl && (
               <Link
                 href={`/dashboard/projects/${project.id}`}
-                className="mt-3 block rounded-xl overflow-hidden border border-border hover:border-border/80 transition-colors"
+                className="mt-3 block rounded-lg overflow-hidden border border-border/50 hover:border-border transition-colors"
               >
                 <img
                   src={project.screenshotUrl}
@@ -479,7 +478,7 @@ function ProjectFeedCard({
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 block border border-border rounded-xl overflow-hidden hover:bg-muted/50 transition-colors"
+                className="mt-3 block border border-border/50 rounded-lg overflow-hidden hover:bg-muted/50 transition-colors"
               >
                 <div className="p-3 flex items-center gap-2">
                   <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -700,156 +699,172 @@ function FeedSkeleton() {
 
 export default function DashboardPage() {
   const [user, setUser] = useState<UserData | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pulse");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
-
-  // Comment modal state
   const [commentModalOpen, setCommentModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const likeControllersRef = useRef<Map<string, AbortController>>(new Map());
 
   const { credits, refreshCredits } = useCredits();
+  const queryClient = useQueryClient();
+  
+  // Debounce timers for like mutations
+  const likeTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const pendingLikesRef = useRef<Map<string, boolean>>(new Map());
 
-  const loadFeed = useCallback(
-    async (type: string) => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/projects/feed?type=${type}`);
-        if (res.ok) {
-          const data = await res.json();
-          setProjects(data.projects || []);
-        }
-      } catch (error) {
-        console.error("Failed to load feed:", error);
-        toast.error("Failed to load feed");
-      } finally {
-        setIsLoading(false);
-      }
+  // Fetch feed with caching
+  const { data: feedData, isLoading } = useQuery({
+    queryKey: ["projects-feed", activeTab],
+    queryFn: async () => {
+      const res = await fetch(`/api/projects/feed?type=${activeTab}`);
+      if (!res.ok) throw new Error("Failed to load feed");
+      const data = await res.json();
+      return data.projects || [];
     },
-    []
-  );
+    staleTime: 30 * 1000, // 30 seconds
+  });
 
-  const loadFollowingIds = useCallback(async () => {
-    try {
+  const projects = feedData || [];
+
+  // Fetch following IDs with caching
+  const { data: followingData } = useQuery({
+    queryKey: ["following-ids"],
+    queryFn: async () => {
       const res = await fetch("/api/follows?type=following-ids");
-      if (res.ok) {
-        const data = await res.json();
-        setFollowingIds(new Set(data.followingIds || []));
-      }
-    } catch (error) {
-      console.error("Failed to load following:", error);
-    }
-  }, []);
+      if (!res.ok) throw new Error("Failed to load following");
+      const data = await res.json();
+      return data.followingIds || [];
+    },
+    staleTime: 60 * 1000, // 1 minute
+  });
+
+  const followingIds = new Set<string>(followingData || []);
 
   useEffect(() => {
-    async function loadData() {
+    async function loadUser() {
       try {
-        // Load user session
         const sessionRes = await fetch("/api/auth/session");
         const sessionData = await sessionRes.json();
-
         if (sessionData.authenticated && sessionData.user) {
           setUser(sessionData.user);
         }
-
-        // Load following IDs
-        await loadFollowingIds();
-
-        // Load feed
-        await loadFeed(activeTab);
       } catch (error) {
-        console.error("Failed to load dashboard data:", error);
+        console.error("Failed to load user:", error);
       }
     }
+    loadUser();
 
-    loadData();
-  }, [loadFeed, loadFollowingIds, activeTab]);
+    // Cleanup timers on unmount
+    return () => {
+      likeTimersRef.current.forEach((timer) => clearTimeout(timer));
+      likeTimersRef.current.clear();
+    };
+  }, []);
 
-  const handleTabChange = async (tab: string) => {
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
-    await loadFeed(tab);
   };
 
-  const handleProjectSubmitSuccess = async () => {
-    await loadFeed(activeTab);
-    await refreshCredits();
+  const handleProjectSubmitSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["projects-feed"] });
+    refreshCredits();
   };
 
-  const handleLike = async (projectId: string) => {
-    try {
-      const existing = likeControllersRef.current.get(projectId);
-      if (existing) {
-        existing.abort();
-      }
-
-      const controller = new AbortController();
-      likeControllersRef.current.set(projectId, controller);
-
+  const likeMutation = useMutation({
+    mutationFn: async (projectId: string) => {
       const res = await fetch("/api/likes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projectId }),
-        signal: controller.signal,
       });
-
       if (!res.ok) throw new Error("Failed to like");
-
-      const data = await res.json();
-
-      if (likeControllersRef.current.get(projectId) !== controller) {
-        return;
-      }
-
-      // Update local state
-      setProjects((prev) =>
-        prev.map((p) =>
+      return res.json();
+    },
+    onSuccess: (data, projectId) => {
+      // Update cache with actual server state
+      queryClient.setQueryData(["projects-feed", activeTab], (old: Project[]) =>
+        old.map((p) =>
           p.id === projectId
             ? { ...p, isLiked: data.liked, likeCount: data.likeCount }
             : p
         )
       );
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        return;
-      }
-      console.error("Failed to like:", error);
+      pendingLikesRef.current.delete(projectId);
+    },
+    onError: (err, projectId) => {
+      // Revert optimistic update on error
+      queryClient.setQueryData(["projects-feed", activeTab], (old: Project[]) =>
+        old.map((p) =>
+          p.id === projectId
+            ? { ...p, isLiked: !p.isLiked, likeCount: p.isLiked ? p.likeCount - 1 : p.likeCount + 1 }
+            : p
+        )
+      );
+      pendingLikesRef.current.delete(projectId);
       toast.error("Failed to like project");
-      throw error;
+    },
+  });
+
+  const handleLike = (projectId: string) => {
+    // Clear existing timer for this project
+    const existingTimer = likeTimersRef.current.get(projectId);
+    if (existingTimer) {
+      clearTimeout(existingTimer);
     }
+
+    // Instant optimistic UI update
+    queryClient.setQueryData(["projects-feed", activeTab], (old: Project[]) =>
+      old.map((p) =>
+        p.id === projectId
+          ? { ...p, isLiked: !p.isLiked, likeCount: p.isLiked ? p.likeCount - 1 : p.likeCount + 1 }
+          : p
+      )
+    );
+
+    // Debounce the actual API call (300ms)
+    const timer = setTimeout(() => {
+      // Only send API request if not already pending
+      if (!pendingLikesRef.current.get(projectId)) {
+        pendingLikesRef.current.set(projectId, true);
+        likeMutation.mutate(projectId);
+      }
+      likeTimersRef.current.delete(projectId);
+    }, 300);
+
+    likeTimersRef.current.set(projectId, timer);
   };
 
-  const handleFollow = async (userId: string) => {
-    try {
+  const followMutation = useMutation({
+    mutationFn: async (userId: string) => {
       const res = await fetch("/api/follows", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId }),
       });
-
       if (!res.ok) throw new Error("Failed to follow");
-
-      const data = await res.json();
-
-      // Update following IDs
-      setFollowingIds((prev) => {
-        const newSet = new Set(prev);
-        if (data.following) {
-          newSet.add(userId);
-        } else {
-          newSet.delete(userId);
-        }
-        return newSet;
+      return res.json();
+    },
+    onMutate: async (userId) => {
+      await queryClient.cancelQueries({ queryKey: ["following-ids"] });
+      const previous = queryClient.getQueryData(["following-ids"]);
+      queryClient.setQueryData(["following-ids"], (old: string[] = []) => {
+        const isFollowing = old.includes(userId);
+        return isFollowing ? old.filter((id) => id !== userId) : [...old, userId];
       });
-
-      toast.success(data.following ? "Following!" : "Unfollowed");
-    } catch (error) {
-      console.error("Failed to follow:", error);
+      return { previous };
+    },
+    onError: (err, userId, context) => {
+      queryClient.setQueryData(["following-ids"], context?.previous);
       toast.error("Failed to follow");
-      throw error;
-    }
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["following-ids"] });
+      queryClient.invalidateQueries({ queryKey: ["projects-feed", "circle"] });
+      toast.success(data.following ? "Following!" : "Unfollowed");
+    },
+  });
+
+  const handleFollow = (userId: string) => {
+    followMutation.mutate(userId);
   };
 
   const handleOpenComments = (project: Project) => {
@@ -859,8 +874,8 @@ export default function DashboardPage() {
 
   const handleCommentCountChange = (count: number) => {
     if (!selectedProject) return;
-    setProjects((prev) =>
-      prev.map((p) =>
+    queryClient.setQueryData(["projects-feed", activeTab], (old: Project[]) =>
+      old.map((p) =>
         p.id === selectedProject.id ? { ...p, commentCount: count } : p
       )
     );
@@ -908,7 +923,7 @@ export default function DashboardPage() {
         ) : projects.length === 0 ? (
           <EmptyState type={activeTab} onOpenModal={() => setIsModalOpen(true)} />
         ) : (
-          projects.map((project) => (
+          projects.map((project: Project) => (
             <ProjectFeedCard
               key={project.id}
               project={project}
