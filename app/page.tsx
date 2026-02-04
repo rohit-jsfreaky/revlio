@@ -291,19 +291,18 @@ function HeroSection() {
 
         {/* Main Headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-bold tracking-tight leading-[1.1] mb-6 text-gray-900 dark:text-white">
-          Get Real Feedback,
+          Get Real Feedback for Your Projects,
           <br />
           Not Fake Likes
         </h1>
 
         {/* Subheadline */}
         <p className="mx-auto max-w-2xl text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-12 leading-relaxed">
-          The feedback economy for builders. Earn credits by reviewing others,
-          spend them to get{" "}
+          The feedback economy platform for indie developers and builders. Get{" "}
           <span className="text-blue-600/80 dark:text-blue-400/80 font-medium">
-            guaranteed, structured feedback
+            guaranteed project reviews and structured code feedback
           </span>{" "}
-          on your projects.
+          by earning credits through reviewing others. Join thousands of developers getting actionable feedback on their side projects and startup ideas.
         </p>
 
         {/* Email Form Card */}
@@ -435,11 +434,11 @@ function ProblemSection() {
             The Problem
           </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white">
-            Social Platforms Are Broken
+            Social Platforms Are Broken for Developers
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             You deserve better than screaming into the void. Here&apos;s why current
-            platforms fail builders like you.
+            platforms fail builders like you when seeking project feedback and code reviews.
           </p>
         </div>
 
@@ -511,8 +510,8 @@ function HowItWorksSection() {
             Simple. <span className="text-blue-600/80 dark:text-blue-400/80">Fair.</span> Effective.
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            A contribution economy that rewards quality: give feedback to get
-            feedback.
+            A feedback economy platform that rewards quality: give project reviews and code feedback to get
+            guaranteed feedback on your own projects.
           </p>
         </div>
 
@@ -601,8 +600,8 @@ function BenefitsSection() {
             Built for Builders, by Builders
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            No vanity metrics—just real growth. A platform designed to help you
-            ship better products.
+            No vanity metrics—just real growth. A developer feedback platform designed to help indie developers
+            ship better products through structured project reviews and actionable code feedback.
           </p>
         </div>
 

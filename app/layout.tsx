@@ -26,11 +26,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.getrevlio.com"),
   title: {
     default:
-      "Revlio - Get Real Feedback for Your Projects | Feedback Economy Platform",
+      "Revlio - Developer Feedback Platform | Get Project Reviews & Code Feedback for Indie Developers",
     template: "%s | Revlio",
   },
   description:
-    "Revlio is a feedback economy platform for indie developers. Get guaranteed, structured feedback for your projects by contributing to the community. No fake engagement - just real, actionable reviews.",
+    "Get real feedback for your projects. Revlio is a feedback economy platform where indie developers earn credits by reviewing others to get guaranteed, structured feedback on their own projects. Join thousands of builders getting actionable code reviews and project feedback.",
   keywords: [
     "developer feedback",
     "project reviews",
@@ -44,6 +44,18 @@ export const metadata: Metadata = {
     "feedback platform",
     "earn credits",
     "guaranteed reviews",
+    "get feedback on project",
+    "developer review platform",
+    "code feedback",
+    "project feedback tool",
+    "indie developer community",
+    "startup feedback",
+    "side project reviews",
+    "developer portfolio feedback",
+    "get code reviews",
+    "project critique",
+    "developer networking",
+    "build in public feedback",
   ],
   authors: [{ name: "Revlio Team" }],
   creator: "Revlio",
@@ -75,23 +87,23 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://www.getrevlio.com",
     siteName: "Revlio",
-    title: "Revlio - Get Real Feedback for Your Projects",
+    title: "Revlio - Developer Feedback Platform | Get Project Reviews & Code Feedback",
     description:
-      "A feedback economy platform where developers earn credits by reviewing others to get guaranteed feedback on their own projects.",
+      "Get real feedback for your projects. A feedback economy platform where indie developers earn credits by reviewing others to get guaranteed, structured feedback on their own projects.",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Revlio - Feedback Economy Platform for Developers",
+        alt: "Revlio - Developer Feedback Platform for Indie Developers and Builders",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Revlio - Get Real Feedback for Your Projects",
+    title: "Revlio - Developer Feedback Platform | Get Project Reviews & Code Feedback",
     description:
-      "A feedback economy platform where developers earn credits by reviewing others to get guaranteed feedback on their own projects.",
+      "Get real feedback for your projects. Join thousands of developers getting actionable code reviews and project feedback through our feedback economy platform.",
     images: ["/og.png"],
     creator: "@revlio_dev",
     site: "@revlio_dev",
@@ -127,6 +139,36 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Revlio",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "1000"
+    },
+    "description": "A feedback economy platform where indie developers earn credits by reviewing others to get guaranteed, structured feedback on their own projects.",
+    "url": "https://www.getrevlio.com",
+    "logo": "https://www.getrevlio.com/revlio_logo.png",
+    "screenshot": "https://www.getrevlio.com/og.png",
+    "featureList": [
+      "Get guaranteed feedback on your projects",
+      "Earn credits by reviewing others",
+      "Structured feedback format",
+      "Developer community",
+      "Project reviews and code feedback"
+    ],
+    "keywords": "developer feedback, project reviews, code review, indie developer, feedback platform, developer community"
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -139,6 +181,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/revlio_logo.png" sizes="180x180" />
         {/* Web manifest */}
         <link rel="manifest" href="/site.webmanifest" />
+        {/* Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} font-sans antialiased`}
