@@ -9,7 +9,7 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ onEdit }: ProfileHeaderProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex items-center gap-3">
+      <div className="flex items-start gap-3">
         <SidebarTrigger className="md:hidden" />
         <div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Profile</h1>

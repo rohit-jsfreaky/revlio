@@ -11,7 +11,7 @@ interface ProjectsHeaderProps {
 export function ProjectsHeader({ onSubmitProject }: ProjectsHeaderProps) {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
+      <div className="flex items-start gap-3">
         <SidebarTrigger className="md:hidden" />
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">

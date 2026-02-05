@@ -200,7 +200,7 @@ function FeedTabs({
   return (
     <div className="sticky top-0 z-10 bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60 border-b border-border">
       <div className="p-3 sm:p-4 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-start gap-2 min-w-0">
           <SidebarTrigger className="lg:hidden h-8 w-8 shrink-0" />
           <div className="min-w-0">
             <h1 className="text-base sm:text-lg font-semibold">Build Stream</h1>
