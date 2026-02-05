@@ -1,16 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CheckCircle2,
-  MessageSquare,
-  FileText,
-  ThumbsUp,
-  ThumbsDown,
-  Reply,
-  Loader2,
-  Send,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,10 +38,10 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="border-border/60 bg-card/80">
       <CardContent className="p-6">
         {/* Reviewer Info */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
               <AvatarImage src={review.reviewer.avatarUrl || undefined} />
@@ -65,59 +55,55 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
             </div>
           </div>
           {isOwner && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <Button
                 variant={review.isHelpful === true ? "default" : "outline"}
                 size="sm"
-                className={review.isHelpful === true ? "bg-green-600 hover:bg-green-700" : ""}
+                className="rounded-full"
                 onClick={() => onMarkHelpful(review.id, true)}
               >
-                <ThumbsUp className="h-4 w-4" />
+                Helpful
               </Button>
               <Button
                 variant={review.isHelpful === false ? "default" : "outline"}
                 size="sm"
-                className={review.isHelpful === false ? "bg-red-600 hover:bg-red-700" : ""}
+                className="rounded-full"
                 onClick={() => onMarkHelpful(review.id, false)}
               >
-                <ThumbsDown className="h-4 w-4" />
+                Not Helpful
               </Button>
             </div>
           )}
         </div>
 
         {/* Review Sections */}
-        <div className="space-y-4">
-          <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-            <h4 className="font-medium text-green-800 dark:text-green-200 mb-2 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" />
+        <div className="space-y-4 mt-5">
+          <div className="p-4 rounded-lg border border-border/60 bg-muted/30">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               What&apos;s Good
             </h4>
-            <p className="text-green-700 dark:text-green-300 text-sm">{review.whatsGood}</p>
+            <p className="text-sm text-foreground/80">{review.whatsGood}</p>
           </div>
 
-          <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-            <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-2 flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
+          <div className="p-4 rounded-lg border border-border/60 bg-muted/30">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               What&apos;s Unclear
             </h4>
-            <p className="text-amber-700 dark:text-amber-300 text-sm">{review.whatsUnclear}</p>
+            <p className="text-sm text-foreground/80">{review.whatsUnclear}</p>
           </div>
 
-          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-            <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2 flex items-center gap-2">
-              <FileText className="h-4 w-4" />
+          <div className="p-4 rounded-lg border border-border/60 bg-muted/30">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Improvement Suggestions
             </h4>
-            <p className="text-blue-700 dark:text-blue-300 text-sm">{review.improvementSuggestion}</p>
+            <p className="text-sm text-foreground/80">{review.improvementSuggestion}</p>
           </div>
         </div>
 
         {/* Owner Reply */}
         {review.ownerReply && !showReplyForm && (
-          <div className="mt-4 p-4 rounded-lg bg-muted border-l-4 border-blue-600">
-            <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-              <Reply className="h-3 w-3" />
+          <div className="mt-4 rounded-lg border border-border/60 bg-muted/20 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
               Owner Response
             </p>
             <p className="text-sm">{review.ownerReply}</p>
@@ -141,12 +127,7 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
                     onClick={handleReplySubmit}
                     disabled={isSubmitting || !replyText.trim()}
                   >
-                    {isSubmitting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4 mr-1" />
-                    )}
-                    Send Reply
+                    {isSubmitting ? "Saving..." : "Send Reply"}
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => setShowReplyForm(false)}>
                     Cancel
@@ -155,7 +136,6 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
               </div>
             ) : (
               <Button variant="outline" size="sm" onClick={() => setShowReplyForm(true)}>
-                <Reply className="h-4 w-4 mr-2" />
                 {review.ownerReply ? "Edit Reply" : "Reply"}
               </Button>
             )}

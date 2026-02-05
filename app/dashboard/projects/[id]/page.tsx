@@ -22,19 +22,22 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <ProjectDetailHeader project={project} />
+    <div className="relative p-4 sm:p-6">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(900px_circle_at_10%_-10%,rgba(59,130,246,0.12),transparent)] dark:bg-[radial-gradient(900px_circle_at_10%_-10%,rgba(59,130,246,0.2),transparent)]" />
+      <div className="mx-auto max-w-6xl space-y-6">
+        <ProjectDetailHeader project={project} />
 
-      <ProjectInfoCards project={project} />
+        <ProjectInfoCards project={project} />
 
-      <ReviewList
-        reviews={project.reviews}
-        reviewsReceived={project.reviewsReceived}
-        reviewsRequired={project.reviewsRequired}
-        isOwner={isOwner}
-        onMarkHelpful={handleMarkHelpful}
-        onReply={handleReply}
-      />
+        <ReviewList
+          reviews={project.reviews}
+          reviewsReceived={project.reviewsReceived}
+          reviewsRequired={project.reviewsRequired}
+          isOwner={isOwner}
+          onMarkHelpful={handleMarkHelpful}
+          onReply={handleReply}
+        />
+      </div>
     </div>
   );
 }

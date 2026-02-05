@@ -10,7 +10,7 @@ interface ProjectListProps {
 
 export function ProjectList({ projects, onEdit }: ProjectListProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {projects.map((project) => (
         <ProjectCard key={project.id} project={project} onEdit={onEdit} />
       ))}

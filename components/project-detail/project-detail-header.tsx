@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, ExternalLink, Github, Clock, Tag, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -10,10 +9,24 @@ import type { ProjectDetail } from "@/hooks/project-detail";
 
 // Status configuration
 const statusConfig: Record<string, { label: string; color: string }> = {
-  draft: { label: "Draft", color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300" },
-  pending_review: { label: "Pending Review", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300" },
-  active: { label: "Active", color: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" },
-  archived: { label: "Archived", color: "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400" },
+  draft: {
+    label: "Draft",
+    color: "bg-muted/60 text-foreground/70 border-border/60",
+  },
+  pending_review: {
+    label: "Pending Review",
+    color:
+      "bg-amber-50 text-amber-700 border-amber-200/70 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800/50",
+  },
+  active: {
+    label: "Active",
+    color:
+      "bg-emerald-50 text-emerald-700 border-emerald-200/70 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800/50",
+  },
+  archived: {
+    label: "Archived",
+    color: "bg-muted/60 text-muted-foreground border-border/60",
+  },
 };
 
 // Category labels
@@ -43,78 +56,84 @@ interface ProjectDetailHeaderProps {
 
 export function ProjectDetailHeader({ project }: ProjectDetailHeaderProps) {
   const status = statusConfig[project.status] || statusConfig.draft;
+  const ownerName = project.owner.name || "Unknown";
 
   return (
     <>
       {/* Back Button */}
       <div className="flex items-start gap-2">
         <SidebarTrigger className="md:hidden" />
-        <Button variant="ghost" asChild className="gap-2">
+        <Button variant="ghost" asChild className="px-2">
           <Link href="/dashboard/projects">
-            <ArrowLeft className="h-4 w-4" />
             Back to Projects
           </Link>
         </Button>
       </div>
 
       {/* Project Header */}
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Screenshot */}
-        {project.screenshotUrl && (
-          <div className="md:w-80 h-48 rounded-xl overflow-hidden border">
-            <Image
-              src={project.screenshotUrl}
-              alt={project.title}
-              width={320}
-              height={192}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-
-        {/* Project Info */}
-        <div className="flex-1">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <h1 className="text-2xl font-bold">{project.title}</h1>
-                <Badge className={status.color}>{status.label}</Badge>
+      <div className="rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col gap-6">
+          {/* Screenshot */}
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-border/60 bg-muted/40">
+            {project.screenshotUrl ? (
+              <Image
+                src={project.screenshotUrl}
+                alt={project.title}
+                width={960}
+                height={600}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-xs uppercase tracking-wider text-muted-foreground">
+                Project preview
               </div>
-              <p className="text-muted-foreground mb-4">{project.description}</p>
-            </div>
-          </div>
-
-          {/* Links */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Button asChild variant="outline" size="sm">
-              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Visit Site
-              </a>
-            </Button>
-            {project.githubUrl && (
-              <Button asChild variant="outline" size="sm">
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-2" />
-                  GitHub
-                </a>
-              </Button>
             )}
           </div>
 
-          {/* Meta */}
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Tag className="h-4 w-4" />
-              {categoryLabels[project.category] || project.category}
+          {/* Project Info */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight">{project.title}</h1>
+              <Badge
+                variant="outline"
+                className={`gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${status.color}`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-current/70" />
+                {status.label}
+              </Badge>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              {formatDate(project.createdAt)}
+
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {project.description}
+            </p>
+
+            {/* Links */}
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant="outline" size="sm" className="rounded-full px-4">
+                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                  Visit Site
+                </a>
+              </Button>
+              {project.githubUrl && (
+                <Button asChild variant="outline" size="sm" className="rounded-full px-4">
+                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                    GitHub
+                  </a>
+                </Button>
+              )}
             </div>
-            <div className="flex items-center gap-1">
-              <User className="h-4 w-4" />
-              {project.owner.name}
+
+            {/* Meta */}
+            <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+              <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-1">
+                {categoryLabels[project.category] || project.category}
+              </span>
+              <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-1">
+                {formatDate(project.createdAt)}
+              </span>
+              <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-1">
+                {ownerName}
+              </span>
             </div>
           </div>
         </div>

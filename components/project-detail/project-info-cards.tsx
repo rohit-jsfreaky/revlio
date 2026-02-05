@@ -1,6 +1,5 @@
 "use client";
 
-import { FileText, Layers, MessageSquare, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { ProjectDetail } from "@/hooks/project-detail";
@@ -11,15 +10,14 @@ interface ProjectInfoCardsProps {
 
 export function ProblemSolvedCard({ project }: ProjectInfoCardsProps) {
   return (
-    <Card>
+    <Card className="border-border/60 bg-card/80">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <FileText className="h-5 w-5 text-amber-600" />
-          Problem Solved
-        </CardTitle>
+        <CardTitle className="text-lg">Problem Solved</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground">{project.problemSolved}</p>
+        <p className="text-muted-foreground">
+          {project.problemSolved || "No problem statement provided yet."}
+        </p>
       </CardContent>
     </Card>
   );
@@ -27,17 +25,18 @@ export function ProblemSolvedCard({ project }: ProjectInfoCardsProps) {
 
 export function TechStackCard({ project }: ProjectInfoCardsProps) {
   return (
-    <Card>
+    <Card className="border-border/60 bg-card/80">
       <CardHeader>
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Layers className="h-5 w-5 text-blue-600" />
-          Tech Stack
-        </CardTitle>
+        <CardTitle className="text-lg">Tech Stack</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
           {project.techStack.map((tech) => (
-            <Badge key={tech} variant="secondary" className="text-sm">
+            <Badge
+              key={tech}
+              variant="secondary"
+              className="rounded-full border border-border/60 bg-muted/40 text-sm"
+            >
               {tech}
             </Badge>
           ))}
@@ -49,9 +48,9 @@ export function TechStackCard({ project }: ProjectInfoCardsProps) {
 
 export function ProjectInfoCards({ project }: ProjectInfoCardsProps) {
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <ProblemSolvedCard project={project} />
       <TechStackCard project={project} />
-    </>
+    </div>
   );
 }
