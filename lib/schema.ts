@@ -61,6 +61,7 @@ export const users = pgTable("users", {
   googleId: varchar("google_id", { length: 255 }).unique(),
   name: varchar("name", { length: 255 }),
   avatarUrl: varchar("avatar_url", { length: 512 }),
+  bannerUrl: varchar("banner_url", { length: 512 }),
   emailVerified: boolean("email_verified").default(false).notNull(),
 
   // Onboarding fields

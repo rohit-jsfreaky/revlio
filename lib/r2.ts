@@ -24,11 +24,15 @@ function getR2Client() {
 const BUCKET_NAME = process.env.R2_BUCKET_NAME || "revlio-uploads";
 
 // Generate a unique filename for uploads
-export function generateFileName(userId: string, originalName: string): string {
+export function generateFileName(
+  userId: string,
+  originalName: string,
+  folder = "avatars"
+): string {
   const ext = originalName.split(".").pop()?.toLowerCase() || "jpg";
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 8);
-  return `avatars/${userId}/${timestamp}-${randomId}.${ext}`;
+  return `${folder}/${userId}/${timestamp}-${randomId}.${ext}`;
 }
 
 // Upload file to R2

@@ -78,6 +78,7 @@ export async function getSessionUserFull(
         googleId: users.googleId,
         name: users.name,
         avatarUrl: users.avatarUrl,
+        bannerUrl: users.bannerUrl,
         emailVerified: users.emailVerified,
         onboardingCompleted: users.onboardingCompleted,
         bio: users.bio,

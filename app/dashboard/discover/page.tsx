@@ -1,45 +1,105 @@
 "use client";
 
-import { Sparkles, Search, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useDiscover, type DiscoverProject } from "@/hooks/discover";
+import {
+  DiscoverHeader,
+  SearchBar,
+  CategoryFilterDropdown,
+  ProjectCard,
+  ProjectListSkeleton,
+  EmptyState,
+} from "@/components/discover";
+import { CommentModal } from "@/components/dashboard/comment-modal";
 
 export default function DiscoverPage() {
+  const {
+    filteredProjects,
+    isLoading,
+    searchQuery,
+    setSearchQuery,
+    categoryFilter,
+    setCategoryFilter,
+    handleLike,
+    refresh,
+  } = useDiscover();
+
+  // Comment modal state
+  const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<DiscoverProject | null>(null);
+
+  const handleOpenComments = (project: DiscoverProject) => {
+    setSelectedProject(project);
+    setCommentModalOpen(true);
+  };
+
+  const handleCloseComments = () => {
+    setCommentModalOpen(false);
+    setSelectedProject(null);
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setCategoryFilter("all");
+  };
+
+  const hasFilters = searchQuery !== "" || categoryFilter !== "all";
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Fresh Builds</h1>
-        <p className="text-muted-foreground">
-          Discover new projects from the community and give voluntary feedback.
-        </p>
-      </div>
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="p-4 border-b border-border bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-10 space-y-4">
+        <DiscoverHeader
+          title="Fresh Builds"
+          subtitle="Discover new projects from the community and give voluntary feedback."
+          projectCount={filteredProjects.length}
+          isLoading={isLoading}
+          onRefresh={refresh}
+        />
 
-      {/* Search and filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search projects..." className="pl-10" />
+        {/* Search and filters */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search projects, tech stack..."
+          />
+          <CategoryFilterDropdown value={categoryFilter} onChange={setCategoryFilter} />
         </div>
-        <Button variant="outline">
-          <Filter className="mr-2 h-4 w-4" />
-          Filters
-        </Button>
       </div>
 
-      {/* Empty state */}
-      <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="rounded-full bg-blue-50 dark:bg-blue-900/30 p-4 mb-4">
-            <Sparkles className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-          </div>
-          <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
-          <p className="text-muted-foreground max-w-md">
-            Be the first to submit a project! Projects will appear here once
-            members start sharing their work.
-          </p>
-        </CardContent>
-      </Card>
+      {/* Project List */}
+      <div className="flex-1">
+        {isLoading ? (
+          <ProjectListSkeleton count={5} />
+        ) : filteredProjects.length === 0 ? (
+          <EmptyState
+            type={hasFilters ? "no-results" : "no-projects"}
+            searchQuery={searchQuery}
+            onClearFilters={hasFilters ? handleClearFilters : undefined}
+          />
+        ) : (
+          filteredProjects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onLike={handleLike}
+              onOpenComments={handleOpenComments}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Comment Modal */}
+      {selectedProject && (
+        <CommentModal
+          isOpen={commentModalOpen}
+          onClose={handleCloseComments}
+          projectId={selectedProject.id}
+          projectTitle={selectedProject.title}
+          projectOwnerId={selectedProject.owner.id}
+        />
+      )}
     </div>
   );
 }
