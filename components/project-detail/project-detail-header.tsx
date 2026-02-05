@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowLeft, ExternalLink, Github, Tag, Clock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -65,6 +66,7 @@ export function ProjectDetailHeader({ project }: ProjectDetailHeaderProps) {
         <SidebarTrigger className="md:hidden" />
         <Button variant="ghost" asChild className="px-2">
           <Link href="/dashboard/projects">
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Projects
           </Link>
         </Button>
@@ -111,12 +113,14 @@ export function ProjectDetailHeader({ project }: ProjectDetailHeaderProps) {
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" size="sm" className="rounded-full px-4">
                 <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="mr-2 h-4 w-4" />
                   Visit Site
                 </a>
               </Button>
               {project.githubUrl && (
                 <Button asChild variant="outline" size="sm" className="rounded-full px-4">
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                    <Github className="mr-2 h-4 w-4" />
                     GitHub
                   </a>
                 </Button>
@@ -126,12 +130,15 @@ export function ProjectDetailHeader({ project }: ProjectDetailHeaderProps) {
             {/* Meta */}
             <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
               <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-1">
+                <Tag className="mr-2 inline-block h-3.5 w-3.5" />
                 {categoryLabels[project.category] || project.category}
               </span>
               <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-1">
+                <Clock className="mr-2 inline-block h-3.5 w-3.5" />
                 {formatDate(project.createdAt)}
               </span>
               <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-1">
+                <User className="mr-2 inline-block h-3.5 w-3.5" />
                 {ownerName}
               </span>
             </div>

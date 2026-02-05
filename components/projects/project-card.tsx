@@ -2,6 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import {
+  FileText,
+  ExternalLink,
+  Github,
+  Clock,
+  CheckCircle2,
+  MessageSquare,
+  Eye,
+  MoreVertical,
+  Pencil,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,22 +26,26 @@ import {
 import type { Project } from "@/hooks/projects";
 
 // Status configuration
-const statusConfig: Record<string, { label: string; color: string }> = {
+const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   draft: {
     label: "Draft",
     color: "bg-muted/60 text-foreground/70 border-border/60",
+    icon: <FileText className="h-3 w-3" />,
   },
   pending_review: {
     label: "Pending Review",
     color: "bg-amber-50 text-amber-700 border-amber-200/70 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800/50",
+    icon: <Clock className="h-3 w-3" />,
   },
   active: {
     label: "Active",
     color: "bg-emerald-50 text-emerald-700 border-emerald-200/70 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800/50",
+    icon: <CheckCircle2 className="h-3 w-3" />,
   },
   archived: {
     label: "Archived",
     color: "bg-muted/60 text-muted-foreground border-border/60",
+    icon: <FileText className="h-3 w-3" />,
   },
 };
 
@@ -70,7 +85,8 @@ export function ProjectCard({ project, onEdit }: ProjectCardProps) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950">
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950">
+              <FileText className="h-5 w-5 text-muted-foreground" />
               <span className="text-xs uppercase tracking-wider text-muted-foreground">
                 Project preview
               </span>
@@ -102,7 +118,7 @@ export function ProjectCard({ project, onEdit }: ProjectCardProps) {
                   variant="outline"
                   className={`shrink-0 gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${status.color}`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-current/70" />
+                  {status.icon}
                   {status.label}
                 </Badge>
               </div>
@@ -139,8 +155,9 @@ export function ProjectCard({ project, onEdit }: ProjectCardProps) {
                     style={{ width: `${reviewProgress}%` }}
                   />
                 </div>
-                <span className="text-sm text-muted-foreground">
-                  Reviews {project.reviewsReceived}/{project.reviewsRequired}
+                <span className="text-sm text-muted-foreground flex items-center gap-1">
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  {project.reviewsReceived}/{project.reviewsRequired}
                 </span>
               </div>
             </div>
@@ -150,30 +167,34 @@ export function ProjectCard({ project, onEdit }: ProjectCardProps) {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="shrink-0 rounded-full border-border/60 px-3"
+                  size="icon"
+                  className="shrink-0 rounded-full border-border/60"
                 >
-                  Manage
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                   <Link href={`/dashboard/projects/${project.id}`}>
+                    <Eye className="h-4 w-4 mr-2" />
                     View Details
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(project)}>
+                  <Pencil className="h-4 w-4 mr-2" />
                   Edit Project
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-2" />
                     Visit Site
                   </a>
                 </DropdownMenuItem>
                 {project.githubUrl && (
                   <DropdownMenuItem asChild>
                     <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                      <Github className="h-4 w-4 mr-2" />
                       GitHub
                     </a>
                   </DropdownMenuItem>
@@ -190,8 +211,9 @@ export function ProjectCard({ project, onEdit }: ProjectCardProps) {
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-blue-600 transition-colors"
+                className="flex items-center gap-1 hover:text-blue-600 transition-colors"
               >
+                <ExternalLink className="h-3.5 w-3.5" />
                 Visit
               </a>
               {project.githubUrl && (
@@ -199,8 +221,9 @@ export function ProjectCard({ project, onEdit }: ProjectCardProps) {
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-foreground transition-colors"
+                  className="flex items-center gap-1 hover:text-foreground transition-colors"
                 >
+                  <Github className="h-3.5 w-3.5" />
                   GitHub
                 </a>
               )}

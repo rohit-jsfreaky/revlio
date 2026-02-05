@@ -1,6 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  CheckCircle2,
+  MessageSquare,
+  Lightbulb,
+  Reply,
+  Send,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -62,6 +72,7 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
                 className="rounded-full"
                 onClick={() => onMarkHelpful(review.id, true)}
               >
+                <ThumbsUp className="h-4 w-4 mr-2" />
                 Helpful
               </Button>
               <Button
@@ -70,6 +81,7 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
                 className="rounded-full"
                 onClick={() => onMarkHelpful(review.id, false)}
               >
+                <ThumbsDown className="h-4 w-4 mr-2" />
                 Not Helpful
               </Button>
             </div>
@@ -79,21 +91,24 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
         {/* Review Sections */}
         <div className="space-y-4 mt-5">
           <div className="p-4 rounded-lg border border-border/60 bg-muted/30">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
               What&apos;s Good
             </h4>
             <p className="text-sm text-foreground/80">{review.whatsGood}</p>
           </div>
 
           <div className="p-4 rounded-lg border border-border/60 bg-muted/30">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
               What&apos;s Unclear
             </h4>
             <p className="text-sm text-foreground/80">{review.whatsUnclear}</p>
           </div>
 
           <div className="p-4 rounded-lg border border-border/60 bg-muted/30">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-2">
+              <Lightbulb className="h-4 w-4" />
               Improvement Suggestions
             </h4>
             <p className="text-sm text-foreground/80">{review.improvementSuggestion}</p>
@@ -103,7 +118,8 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
         {/* Owner Reply */}
         {review.ownerReply && !showReplyForm && (
           <div className="mt-4 rounded-lg border border-border/60 bg-muted/20 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-2">
+              <Reply className="h-4 w-4" />
               Owner Response
             </p>
             <p className="text-sm">{review.ownerReply}</p>
@@ -127,7 +143,17 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
                     onClick={handleReplySubmit}
                     disabled={isSubmitting || !replyText.trim()}
                   >
-                    {isSubmitting ? "Saving..." : "Send Reply"}
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4 mr-2" />
+                        Send Reply
+                      </>
+                    )}
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => setShowReplyForm(false)}>
                     Cancel
@@ -136,6 +162,7 @@ export function ReviewCard({ review, isOwner, onMarkHelpful, onReply }: ReviewCa
               </div>
             ) : (
               <Button variant="outline" size="sm" onClick={() => setShowReplyForm(true)}>
+                <Reply className="h-4 w-4 mr-2" />
                 {review.ownerReply ? "Edit Reply" : "Reply"}
               </Button>
             )}

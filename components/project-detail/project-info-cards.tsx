@@ -1,5 +1,6 @@
 "use client";
 
+import { FileText, Layers } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { ProjectDetail } from "@/hooks/project-detail";
@@ -12,7 +13,10 @@ export function ProblemSolvedCard({ project }: ProjectInfoCardsProps) {
   return (
     <Card className="border-border/60 bg-card/80">
       <CardHeader>
-        <CardTitle className="text-lg">Problem Solved</CardTitle>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <FileText className="h-4 w-4 text-muted-foreground" />
+          Problem Solved
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground">
@@ -27,7 +31,10 @@ export function TechStackCard({ project }: ProjectInfoCardsProps) {
   return (
     <Card className="border-border/60 bg-card/80">
       <CardHeader>
-        <CardTitle className="text-lg">Tech Stack</CardTitle>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Layers className="h-4 w-4 text-muted-foreground" />
+          Tech Stack
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
