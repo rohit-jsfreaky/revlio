@@ -1,6 +1,5 @@
 "use client";
 
-import { Sparkles, FolderOpen, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface EmptyStateProps {
@@ -12,10 +11,7 @@ interface EmptyStateProps {
 export function EmptyState({ type, searchQuery, onClearFilters }: EmptyStateProps) {
   if (type === "no-results") {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="rounded-full bg-muted p-4 mb-4">
-          <SearchX className="h-8 w-8 text-muted-foreground" />
-        </div>
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-card/80 py-16 px-6 text-center">
         <h3 className="text-lg font-semibold mb-2">No matching projects</h3>
         <p className="text-muted-foreground max-w-md mb-4">
           {searchQuery
@@ -32,10 +28,7 @@ export function EmptyState({ type, searchQuery, onClearFilters }: EmptyStateProp
   }
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="rounded-full bg-blue-50 dark:bg-blue-900/30 p-4 mb-4">
-        <Sparkles className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-      </div>
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-border/60 bg-card/80 py-16 px-6 text-center">
       <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
       <p className="text-muted-foreground max-w-md">
         Be the first to submit a project! Projects will appear here once

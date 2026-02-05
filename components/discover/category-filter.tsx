@@ -1,6 +1,5 @@
 "use client";
 
-import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,14 +27,33 @@ const CATEGORY_OPTIONS: { value: CategoryFilter; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
+function FilterIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4 text-muted-foreground"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 6h16" />
+      <path d="M7 12h10" />
+      <path d="M10 18h4" />
+    </svg>
+  );
+}
+
 export function CategoryFilterDropdown({ value, onChange }: CategoryFilterProps) {
   const currentLabel = CATEGORY_OPTIONS.find((opt) => opt.value === value)?.label || "All Categories";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="gap-2">
-          <Filter className="h-4 w-4" />
+        <Button variant="outline" className="rounded-full px-4 gap-2">
+          <FilterIcon />
           <span className="hidden sm:inline">{currentLabel}</span>
           <span className="sm:hidden">Filter</span>
         </Button>

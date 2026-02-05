@@ -69,7 +69,7 @@ export default function DiscoverPage() {
       </div>
 
       {/* Project List */}
-      <div className="flex-1">
+      <div className="flex-1 p-4 sm:p-6 space-y-4">
         {isLoading ? (
           <ProjectListSkeleton count={5} />
         ) : filteredProjects.length === 0 ? (

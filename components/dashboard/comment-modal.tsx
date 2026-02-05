@@ -765,13 +765,13 @@ export function CommentModal({
     return (
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent side="bottom" className="h-[85vh] p-0">
-          <SheetHeader className="p-4 border-b border-border">
+          <SheetHeader className="px-4 border-b border-border">
             <SheetTitle>Comments</SheetTitle>
             <SheetDescription className="truncate">
               {projectTitle}
             </SheetDescription>
           </SheetHeader>
-          <div className="flex-1 overflow-y-auto p-4 h-[calc(85vh-180px)]">
+          <div className="flex-1 overflow-y-auto px-4 h-[calc(85vh-180px)]">
             {commentsContent}
           </div>
           {inputSection}
